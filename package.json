@@ -1,0 +1,42 @@
+{
+  "name": "simjs-random",
+  "version": "0.2.6",
+  "description": "Random number generation utilities from simjs",
+  "main": "simjs-random.js",
+  "scripts": {
+    "compile": "babel --presets es2015 -d test-comp/ test/",
+    "clean": "rm -rf test-comp/",
+
+    "pretest": "npm run compile",
+    "test": "mocha test-comp/",
+    "posttest": "npm run clean"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mvarshney/simjs-source.git"
+  },
+  "keywords": [
+    "random",
+    "statistics",
+    "normal",
+    "gaussian",
+    "exponential",
+    "poisson",
+    "distribution",
+    "cdf",
+    "pdf",
+    "ppf"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mvarshney/simjs-source/issues"
+  },
+  "homepage": "https://github.com/mvarshney/simjs-source#readme",
+  "devDependencies": {
+    "babel-cli": "^6.3.17",
+    "babel-preset-es2015": "^6.3.13",
+    "chai": "^3.4.1",
+    "mocha": "^2.3.4"
+  }
+}
