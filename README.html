@@ -1,0 +1,226 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="General Purpose Discrete Event Simulation Library in JavaScript" name="description" />
+<meta content="discrete event simulation, simulation, javascript, web simulation, javascript simulator" name="keywords" />
+
+    <title>SIM.JS | Discrete Event Simulation in JavaScript</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.26',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="" href="index.html" />
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="download.html" title="Download SIM.JS, random.js"
+             accesskey="N">next</a></li>
+        <li class="right" >
+          <a href="statistics.html" title="Statistics"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Home</a> &raquo;</li>
+      </ul>
+    </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+
+  <div class="section" id="random-number-generation">
+<h1>Random Number Generation<a class="headerlink" href="#random-number-generation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="why-not-math-random">
+<h2>Why not <tt class="docutils literal"><span class="pre">Math.random()</span></tt>?<a class="headerlink" href="#why-not-math-random" title="Permalink to this headline">¶</a></h2>
+<p>The JavaScript&#8217;s native <tt class="docutils literal"><span class="pre">Math.random()</span></tt> function is not suited for Discrete Event Simulations, since:</p>
+<ul class="simple">
+<li>The <tt class="docutils literal"><span class="pre">Math.random()</span></tt> function cannot be <em>seeded</em>. There is no way to guarantee that the same random stream will be produced the next time the script is executed.</li>
+<li>There is <em>only one stream</em> of random numbers. Statistics purists frown upon when two independent random distributions are drawn from same seed.</li>
+<li>The javascript library provides only the <em>uniform</em> probability distribution function. In DES, as also in many other scientific applications, there is a need for other kinds of distributions, such as <em>exponential</em>, <em>gaussian</em>, <em>pareto</em> etc.</li>
+<li>The native <tt class="docutils literal"><span class="pre">Math.random()</span></tt> does not use (at the time of writing) the arguably better <em>Mersenne Twister</em> algorithm for random number generator (see Mersenne Twister <a class="reference external" href="http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html">website</a> and Wikipedia <a class="reference external" href="http://en.wikipedia.org/wiki/Mersenne_twister">article</a>).</li>
+</ul>
+</div>
+<div class="section" id="the-random-library">
+<h2>The <tt class="docutils literal"><span class="pre">Random</span></tt> Library<a class="headerlink" href="#the-random-library" title="Permalink to this headline">¶</a></h2>
+<div class="sidebar">
+<p class="first sidebar-title">Download random.js</p>
+<p class="last">You can download the Random library separately at the <a class="reference internal" href="download.html#download"><em>download page</em></a>.</p>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">Random</span></tt> library uses the Mersenne Twister algorithm for generating random number stream, and is based on the JavaScript implementation by Makoto Matsumoto and Takuji Nishimura (<a class="reference external" href="www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/VERSIONS/JAVASCRIPT/java-script.html">code</a>).</p>
+<p>The original code is wrapped around as a javascript class and there can be multiple objects each representing different random number streams. For example,</p>
+<div class="highlight-js"><div class="highlight"><pre><span class="cm">/* Demonstrate that random number streams can be seeded,</span>
+<span class="cm"> * and multiple streams can be created in a single script. */</span>
+<span class="kd">var</span> <span class="nx">stream1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Random</span><span class="p">(</span><span class="mi">1234</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">stream2</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Random</span><span class="p">(</span><span class="mi">6789</span><span class="p">);</span>
+
+<span class="nx">stream1</span><span class="p">.</span><span class="nx">random</span><span class="p">();</span> <span class="c1">// returns 0.966453535715118 always</span>
+<span class="nx">stream2</span><span class="p">.</span><span class="nx">random</span><span class="p">();</span> <span class="c1">// returns 0.13574991398490965 always</span>
+</pre></div>
+</div>
+<p>In addition, the <tt class="docutils literal"><span class="pre">Random</span></tt> library supports following probability distribution functions:</p>
+<table class="hlist"><tr><td><ul class="simple">
+<li><a class="reference internal" href="#Random.exponential" title="Random.exponential"><tt class="xref js js-func docutils literal"><span class="pre">exponential()</span></tt></a></li>
+<li><a class="reference internal" href="#Random.gamma" title="Random.gamma"><tt class="xref js js-func docutils literal"><span class="pre">gamma()</span></tt></a></li>
+</ul>
+</td><td><ul class="simple">
+<li><a class="reference internal" href="#Random.normal" title="Random.normal"><tt class="xref js js-func docutils literal"><span class="pre">normal()</span></tt></a></li>
+<li><a class="reference internal" href="#Random.pareto" title="Random.pareto"><tt class="xref js js-func docutils literal"><span class="pre">pareto()</span></tt></a></li>
+</ul>
+</td><td><ul class="simple">
+<li><a class="reference internal" href="#Random.triangular" title="Random.triangular"><tt class="xref js js-func docutils literal"><span class="pre">triangular()</span></tt></a></li>
+<li><a class="reference internal" href="#Random.uniform" title="Random.uniform"><tt class="xref js js-func docutils literal"><span class="pre">uniform()</span></tt></a></li>
+</ul>
+</td><td><ul class="simple">
+<li><a class="reference internal" href="#Random.weibull" title="Random.weibull"><tt class="xref js js-func docutils literal"><span class="pre">weibull()</span></tt></a></li>
+</ul>
+</td></tr></table>
+</div>
+<div class="section" id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="Random ">
+<em class="property">class </em><tt class="descname">Random </tt><big>(</big><span class="optional">[</span><em>seed</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Random " title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first last simple">
+<li><strong>seed</strong> (<em>integer</em>) &#8211; An optional seed value. If this argument is not provided, then the seed value is set to <tt class="docutils literal"><span class="pre">new</span> <span class="pre">Date().getTime()</span></tt>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Random.random">
+<tt class="descclassname">Random.</tt><tt class="descname">random</tt><big>(</big><big>)</big><a class="headerlink" href="#Random.random" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a uniformly generated random floating point number in the range <tt class="docutils literal"><span class="pre">[0,</span> <span class="pre">1.0)</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="Random.exponential">
+<tt class="descclassname">Random.</tt><tt class="descname">exponential</tt><big>(</big><em>lambda</em><big>)</big><a class="headerlink" href="#Random.exponential" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exponential distribution. <tt class="docutils literal"><span class="pre">lambda</span></tt> is the rate (inverse of mean) for the distribution. <tt class="docutils literal"><span class="pre">lambda</span></tt> is a required parameters, and must be non-negative and non-zero.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="Random.gamma">
+<tt class="descclassname">Random.</tt><tt class="descname">gamma</tt><big>(</big><em>alpha</em>, <em>beta</em><big>)</big><a class="headerlink" href="#Random.gamma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gamma distribution. <tt class="docutils literal"><span class="pre">alpha</span></tt> is sometimes also known as <em>shape</em> of the distribution, while <tt class="docutils literal"><span class="pre">beta</span></tt> as the <em>scale</em>. Both arguments are required.</p>
+<p>This function is adapted from Python 2.6 implementation of <tt class="docutils literal"><span class="pre">random.py</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="Random.normal">
+<tt class="descclassname">Random.</tt><tt class="descname">normal</tt><big>(</big><em>mu</em>, <em>sigma</em><big>)</big><a class="headerlink" href="#Random.normal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Normal (or Gaussian) distribution. <tt class="docutils literal"><span class="pre">mu</span></tt> is the mean of the Gaussian probability density function, and <tt class="docutils literal"><span class="pre">sigma</span></tt> is the standard deviation. Both parameters are required.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="Random.pareto">
+<tt class="descclassname">Random.</tt><tt class="descname">pareto</tt><big>(</big><em>alpha</em><big>)</big><a class="headerlink" href="#Random.pareto" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pareto distribution. The <tt class="docutils literal"><span class="pre">alpha</span></tt> parameter is required.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="Random.triangular">
+<tt class="descclassname">Random.</tt><tt class="descname">triangular</tt><big>(</big><em>lower</em>, <em>upper</em>, <em>mode</em><big>)</big><a class="headerlink" href="#Random.triangular" title="Permalink to this definition">¶</a></dt>
+<dd><p>Triangular distribution. The random number are generated between the range (<tt class="docutils literal"><span class="pre">lower</span></tt>, <tt class="docutils literal"><span class="pre">upper</span></tt>) with <tt class="docutils literal"><span class="pre">mode</span></tt> as the mode value. All three parameters are required.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="Random.uniform">
+<tt class="descclassname">Random.</tt><tt class="descname">uniform</tt><big>(</big><em>lower</em>, <em>upper</em><big>)</big><a class="headerlink" href="#Random.uniform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uniform distribution. Returns a uniformly generated random number in the range [<tt class="docutils literal"><span class="pre">lower</span></tt>, <tt class="docutils literal"><span class="pre">upper</span></tt>). Both <em>lower</em> and <em>upper</em> arguments are required.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="Random.weibull">
+<tt class="descclassname">Random.</tt><tt class="descname">weibull</tt><big>(</big><em>alpha</em>, <em>beta</em><big>)</big><a class="headerlink" href="#Random.weibull" title="Permalink to this definition">¶</a></dt>
+<dd><p>Weibull distribution. Both <tt class="docutils literal"><span class="pre">alpha</span></tt> and <tt class="docutils literal"><span class="pre">beta</span></tt> parameters are required.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Random Number Generation</a><ul>
+<li><a class="reference internal" href="#why-not-math-random">Why not <tt class="docutils literal"><span class="pre">Math.random()</span></tt>?</a></li>
+<li><a class="reference internal" href="#the-random-library">The <tt class="docutils literal"><span class="pre">Random</span></tt> Library</a></li>
+<li><a class="reference internal" href="#api-reference">API Reference</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="statistics.html"
+                        title="previous chapter">Statistics</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="download.html"
+                        title="next chapter">Download SIM.JS, random.js</a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="download.html" title="Download SIM.JS, random.js"
+             >next</a></li>
+        <li class="right" >
+          <a href="statistics.html" title="Statistics"
+             >previous</a> |</li>
+        <li><a href="index.html">Home</a> &raquo;</li>
+      </ul>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2011, Maneesh Varshney.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+
+
+  </body>
